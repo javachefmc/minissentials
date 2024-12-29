@@ -2,11 +2,17 @@
   "schemaVersion": 1,
   "id": "minissentials",
   "version": "${version}",
-  "name": "minissentials",
+  "name": "Minissentials",
   "description": "Fabric server mod inspired by Bukkit Essentials",
-  "authors": [],
-  "contact": {},
-  "license": "LGPL-3.0",
+  "authors": [
+    "JavaChef"
+  ],
+  "contact": {
+    "homepage": "https://github.com/javachefmc/minissentials/",
+    "issues": "https://github.com/javachefmc/minissentials/issues",
+    "sources": "https://github.com/javachefmc/minissentials/"
+  },
+  "license": "GNU Lesser General Public License version 3 (LGPLv3)",
   "icon": "assets/minissentials/icon.png",
   "environment": "server",
   "entrypoints": {
@@ -18,12 +24,13 @@
     "minissentials.mixins.json",
     {
       "config": "minissentials.client.mixins.json",
-      "environment": "client"
+      "environment": "server"
     }
   ],
   "depends": {
-    "fabricloader": ">=${loader_version}",
-    "fabric": "*",
-    "minecraft": "${minecraft_version}"
+    "fabricloader": ">=0.16.9",
+    "fabric": ">=0.110.0+1.21.3",
+    "minecraft": ">=1.21.3",
+    "java": ">=21"
   }
 }

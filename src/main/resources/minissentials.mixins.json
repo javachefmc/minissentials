@@ -4,6 +4,7 @@
   "package": "com.javachefmc.minissentials.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "ModEntityDataSaverMixin"
   ],
   "injectors": {
     "defaultRequire": 1
