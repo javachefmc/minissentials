@@ -14,6 +14,8 @@ public class ModRegistries {
     public static void registerCommands(){
         CommandRegistrationCallback.EVENT.register(MinissentialsInit::register);
 
+        CommandRegistrationCallback.EVENT.register(Ping::register);
+
         CommandRegistrationCallback.EVENT.register(SetHome::register);
         CommandRegistrationCallback.EVENT.register(DelHome::register);
         CommandRegistrationCallback.EVENT.register(Home::register);

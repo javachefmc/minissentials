@@ -19,7 +19,6 @@ public abstract class ModEntityDataSaverMixin implements IEntityDataSaver {
 
 
      */
-
     private CompoundTag persistentData;
 
     @Override

@@ -1,8 +1,8 @@
 # minissentials
-Fabric server mod inspired by Bukkit Essentials
+Fabric server mod inspired by Bukkit Essentials.
 
 Currently implemented features:
-- None
+- Ping
 
 Planned features:
 - MOTD
@@ -16,6 +16,23 @@ Planned features:
 - Help
 - Broadcast
 - Jail
-- Ping
 - Block
 - Online
+- Shutdown
+
+<details>
+<summary>Currently in progress:</summary>
+
+- Chat styling and nickname injector
+- Server-side JSON database structure
+- Warps
+
+</details>
+
+<details>
+<summary>Issues/TODO:</summary>
+
+- gamerule logAdminCommands compat
+- need op-only permissions for some commands
+
+</details>
