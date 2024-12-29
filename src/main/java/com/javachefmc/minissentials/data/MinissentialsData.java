@@ -14,11 +14,11 @@ public class MinissentialsData {
     /*
 
 
-    Manages JSON data
+    Manages player JSON data
 
 
      */
-    public static String DATA_DIR = FabricLoader.getInstance().getGameDir() + "/minissentials_data";
+    public static String PLAYERDATA_DIR = FabricLoader.getInstance().getGameDir() + "/minissentials/data/players";
 
     // Enum to avoid errors in typing file names
     public enum DataFileType {
@@ -29,12 +29,12 @@ public class MinissentialsData {
 
     public static File getDataFolder(ServerPlayer player){
         String UUID = player.getStringUUID();
-        return new File(DATA_DIR + "/" + UUID);
+        return new File(PLAYERDATA_DIR + "/" + UUID);
     }
 
     public static File getDataFile(ServerPlayer player, DataFileType fileType){
         String UUID = player.getStringUUID();
-        return new File(DATA_DIR + "/" + UUID + "/" + fileType + ".json");
+        return new File(PLAYERDATA_DIR + "/" + UUID + "/" + fileType + ".json");
     }
 
     public static JSONObject getData(ServerPlayer player, DataFileType fileType) {

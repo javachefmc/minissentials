@@ -21,7 +21,7 @@ public class Home {
 
     private static int run(CommandContext<CommandSourceStack> context){
         // Do something
-        Minissentials.chatToSender(context, "Warping to home");
+        Minissentials.chatToSender(context, "Warping to &4home");
         return 1;
     }
 }

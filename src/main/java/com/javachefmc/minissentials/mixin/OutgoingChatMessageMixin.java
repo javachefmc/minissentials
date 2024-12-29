@@ -13,7 +13,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class OutgoingChatMessageMixin {
     @Inject(method="sendChatMessage", at=@At("HEAD"))
     public void sendChatMessageInjector(OutgoingChatMessage outgoingChatMessage, boolean bl, ChatType.Bound bound, CallbackInfo ci){
-        Minissentials.log(outgoingChatMessage.toString());
+//      UNIT TEST
+        //        Minissentials.log(outgoingChatMessage.toString());
     }
 
     // for OutgoingChatMessage.class
