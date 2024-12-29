@@ -8,12 +8,9 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.MessageArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
-
-import static org.apache.commons.lang3.StringUtils.join;
 
 public class SetHome {
     /*
@@ -24,8 +21,7 @@ public class SetHome {
 
      */
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext commandBuildContext, Commands.CommandSelection commandSelection) {
-        dispatcher.register(Commands.literal("sethome")
-                .then(Commands.argument("name", MessageArgument.message()).executes(SetHome::run)));
+        dispatcher.register(Commands.literal("sethome").executes(SetHome::run));
 
 //        dispatcher.register((Commands.literal("say").requires((commandSourceStack) -> {
 //            return commandSourceStack.hasPermission(2);
@@ -39,7 +35,7 @@ public class SetHome {
 //        })));
     }
 
-    private static int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int run(CommandContext<CommandSourceStack> context) {
 
         ServerPlayer player = context.getSource().getPlayer();
 
@@ -48,8 +44,8 @@ public class SetHome {
 
 //        player.getEntityData().set();
 
-        String command = context.getInput();
-        String args = command.split(" ",2)[1];
+//        String command = context.getInput();
+//        String args = command.split(" ",2)[1];
 
         WarpData.setSpawn((IEntityDataSaver) player, player.position(), player.getRotationVector());
 

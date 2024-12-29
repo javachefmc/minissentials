@@ -2,14 +2,14 @@ package com.javachefmc.minissentials.commands;
 
 import com.javachefmc.minissentials.data.MinissentialsData;
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+
+import static com.javachefmc.minissentials.Minissentials.chatToSender;
 
 public class MinissentialsInit {
     /*
@@ -31,7 +31,7 @@ public class MinissentialsInit {
 
         MinissentialsData.init(player);
 
-        context.getSource().sendSuccess(() -> Component.literal("Initialized Minissentials for UUID " + player.getStringUUID()), false);
+        chatToSender(context, "Initialized Minissentials for UUID " + player.getStringUUID());
 
         return 1;
     }

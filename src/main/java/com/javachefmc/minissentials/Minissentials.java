@@ -1,7 +1,10 @@
 package com.javachefmc.minissentials;
 
 import com.javachefmc.minissentials.util.ModRegistries;
+import com.mojang.brigadier.context.CommandContext;
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,5 +26,9 @@ public class Minissentials implements ModInitializer {
 
     public static void log(String message) {
         LOGGER.info(prefix + message);
+    }
+
+    public static void chatToSender(CommandContext<CommandSourceStack> context, String message) {
+        context.getSource().sendSuccess(() -> Component.literal(message), false);
     }
 }
