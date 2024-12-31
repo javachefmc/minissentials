@@ -14,6 +14,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import net.minecraft.ChatFormatting;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
@@ -35,11 +37,13 @@ public enum MChatFormatting implements StringRepresentable {
     LIGHT_PURPLE("LIGHT_PURPLE", 'd', 13, 16733695),
     YELLOW("YELLOW", 'e', 14, 16777045),
     WHITE("WHITE", 'f', 15, 16777215),
+
     OBFUSCATED("OBFUSCATED", 'k', true),
     BOLD("BOLD", 'l', true),
     STRIKETHROUGH("STRIKETHROUGH", 'm', true),
     UNDERLINE("UNDERLINE", 'n', true),
     ITALIC("ITALIC", 'o', true),
+
     RESET("RESET", 'r', -1, (Integer)null);
 
     public static final Codec<MChatFormatting> CODEC = StringRepresentable.fromEnum(MChatFormatting::values);
@@ -62,15 +66,15 @@ public enum MChatFormatting implements StringRepresentable {
         return string.toLowerCase(Locale.ROOT).replaceAll("[^a-z]", "");
     }
 
-    private MChatFormatting(final String string2, final char c, final int j, @Nullable final Integer integer) {
+    MChatFormatting(final String string2, final char c, final int j, @Nullable final Integer integer) {
         this(string2, c, false, j, integer);
     }
 
-    private MChatFormatting(final String string2, final char c, final boolean bl) {
+    MChatFormatting(final String string2, final char c, final boolean bl) {
         this(string2, c, bl, -1, (Integer)null);
     }
 
-    private MChatFormatting(final String string2, final char c, final boolean bl, final int j, @Nullable final Integer integer) {
+    MChatFormatting(final String string2, final char c, final boolean bl, final int j, @Nullable final Integer integer) {
         this.name = string2;
         this.code = c;
         this.isFormat = bl;
@@ -177,6 +181,15 @@ public enum MChatFormatting implements StringRepresentable {
     ////// ADDED BY ME
 
     public static String[] toTokens(String string){
-        return string.split("(?i)&[0-9A-FK-OR]");
+        return string.split("(?i)(?=&[0-9A-FK-OR])");
+    }
+
+    public static ChatFormatting getStyle(char code){
+        switch (code){
+            case '1':
+                return ChatFormatting.AQUA;
+            default:
+                return ChatFormatting.WHITE;
+        }
     }
 }

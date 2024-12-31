@@ -3,7 +3,7 @@ package com.javachefmc.minissentials.util;
 import com.javachefmc.minissentials.commands.*;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 
-public class ModRegistries {
+public class CommandRegistries {
     /*
 
 
@@ -11,14 +11,17 @@ public class ModRegistries {
 
 
      */
-    public static void registerCommands(){
+    public static void register(){
         CommandRegistrationCallback.EVENT.register(MinissentialsInit::register);
 
         CommandRegistrationCallback.EVENT.register(Ping::register);
+        CommandRegistrationCallback.EVENT.register(TestFormat::register);
 
         CommandRegistrationCallback.EVENT.register(SetHome::register);
         CommandRegistrationCallback.EVENT.register(DelHome::register);
         CommandRegistrationCallback.EVENT.register(Home::register);
+
+        CommandRegistrationCallback.EVENT.register(Spawn::register);
 
         CommandRegistrationCallback.EVENT.register(SetWarp::register);
         CommandRegistrationCallback.EVENT.register(DelWarp::register);
