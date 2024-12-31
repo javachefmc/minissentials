@@ -21,7 +21,7 @@ public class TestFormat {
 
     private static int run(CommandContext<CommandSourceStack> context){
         // Do something
-        Minissentials.chatToSender(context, "Testing formatting: &00&11&22&33&44&55&66&77&88&99&aa&bb&cc&dd&ee&ff&kk&ll&mm&nn&oo&rr&00&11&22&33&44&55&66&77&88&99&aa&bb&cc&dd&ee&ff&kk&ll&mm&nn&oo");
+        Minissentials.chatToSender(context, "Testing formatting: &00&11&22&33&44&55&66&77&88&99&aa&bb&cc&dd&ee&ff&ll&mm&nn&oo&rr&00&11&22&33&44&55&66&77&88&99&aa&bb&cc&dd&ee&ff&kk&r&ll&r&mm&r&nn&r&oo&r");
         return 1;
     }
 }

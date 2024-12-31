@@ -45,15 +45,22 @@ public class Minissentials implements ModInitializer {
 
 
         // Initialize state of string prior to stepping through it
+        boolean isObfuscated = false;
         boolean isBold = false;
+        boolean isStrikethrough = false;
         boolean isItalic = false;
         boolean isUnderline = false;
-        boolean isObfuscated = false;
+
         ChatFormatting defaultColor = ChatFormatting.WHITE;
         ChatFormatting currentColor = defaultColor; // Empty color is default
 
         Component tokenString = Component.literal("");
         Component currentToken = Component.literal("");
+
+        Component prefix = Component.literal("[Minissentials] ").withStyle(ChatFormatting.RED);
+
+        // add prefix
+        tokenString.getSiblings().add(prefix);
 
         // Step through each token
         for (String token : tokenizedText) {
@@ -67,36 +74,60 @@ public class Minissentials implements ModInitializer {
                     if (formatCode.isColor()) {
                         // This is a color code
 
-
-                        // Set (reset) saved color
-//                        currentColor = formatCode.getId();
+                        // Set the color
                         currentColor = formatCode;
 
-
-                        Minissentials.log("Encountered color code: (" + currentColor.getName() + ") for token (" + token + ")");
-
                         // TODO: remove formatting code from string
+                        token = MChatFormatting.stripFormatting(token);
+
                         currentToken = Component.literal(token).withStyle(currentColor);
 
                     } else if (formatCode.isFormat()) {
                         // This is a formatting code
-//                        Minissentials.log("Encountered formatting code");
-
-                        Minissentials.log("Encountered formatting code: (" + formatCode.getName() + ") for token (" + token + ")");
 
                         // TODO: remove formatting code from string
-//                        currentToken = Component.literal(token).withStyle();
+                        token = MChatFormatting.stripFormatting(token);
 
-                        currentToken = Component.literal(token).withStyle(currentColor).withStyle(formatCode);
+                        // Set current color
+                        currentToken = Component.literal(token).withStyle(currentColor);
+
+                        // Set styling
+                        switch (formatCode.getName()) {
+                            case "obfuscated":
+                                isObfuscated = true;
+                                break;
+                            case "bold":
+                                isBold = true;
+                                break;
+                            case "strikethrough":
+                                isStrikethrough = true;
+                                break;
+                            case "underline":
+                                isUnderline = true;
+                                break;
+                            case "italic":
+                                isItalic = true;
+                                break;
+                        }
+
+                        if (isObfuscated) currentToken = currentToken.copy().withStyle(ChatFormatting.OBFUSCATED);
+                        if (isBold) currentToken = currentToken.copy().withStyle(ChatFormatting.BOLD);
+                        if (isStrikethrough) currentToken = currentToken.copy().withStyle(ChatFormatting.STRIKETHROUGH);
+                        if (isUnderline) currentToken = currentToken.copy().withStyle(ChatFormatting.UNDERLINE);
+                        if (isItalic) currentToken = currentToken.copy().withStyle(ChatFormatting.ITALIC);
+
                     } else {
-                        // PROBABLY A RESET BUT LET'S CHECK ANYWAY
-                        Minissentials.log("Got a code that isn't a color or format: " + formatCode.getName());
+                        // MOST LIKELY A RESET CODE
 
                         currentColor = defaultColor;
-                        isBold = false;
                         isObfuscated = false;
+                        isBold = false;
+                        isStrikethrough = false;
                         isItalic = false;
                         isUnderline = false;
+
+                        // TODO: remove formatting code from string
+                        token = MChatFormatting.stripFormatting(token);
 
                         currentToken = Component.literal(token).withStyle(currentColor);
                     }
@@ -109,25 +140,11 @@ public class Minissentials implements ModInitializer {
                     currentToken = Component.literal(token).withStyle(currentColor);
                 }
             } else {
-                Minissentials.log("Something bad about to happen");
+
             }
 
             tokenString.getSiblings().add(currentToken);
-
-            Minissentials.log(token);
         }
-
-
-
-
-
-
-        Component prefix = Component.literal("[Minissentials] ").withStyle(ChatFormatting.RED);
-        Component formattedMessage = Component.literal(formattedText).withStyle(ChatFormatting.GOLD);
-//        Component formattedMessage = tokenString;
-
-        // This appears to be the preferred way to chain components together
-        prefix.getSiblings().add(formattedMessage);
 
         context.getSource().sendSuccess(() -> tokenString, false);
     }
