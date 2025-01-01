@@ -34,9 +34,6 @@ public class Minissentials implements ModInitializer {
 
     public static void chatToSender(CommandContext<CommandSourceStack> context, String message) {
 
-        // Temporary bugfix that might stay here forever
-        message = "&r" + message;
-
         String formattedText = MChatFormatting.stripFormatting(message);
         String[] tokenizedText = MChatFormatting.toTokens(message);
 
@@ -54,48 +51,29 @@ public class Minissentials implements ModInitializer {
         ChatFormatting currentColor = defaultColor; // Empty color is default
 
         Component tokenString = Component.literal("");
-        Component currentToken = Component.literal("");
-
-        Component prefix = Component.literal("[Minissentials] ").withStyle(ChatFormatting.GOLD);
+        Component currentToken;
 
         // add prefix
+        Component prefix = Component.literal("[Minissentials] ").withStyle(ChatFormatting.GOLD);
         tokenString.getSiblings().add(prefix);
-
-        // TODO: PLEASE OPTIMIZE THIS LOGIC TO REMOVE REDUNDANT CODE
 
         // Step through each token
         for (String token : tokenizedText) {
             String firstTwo = token.length() < 2 ? "" : token.substring(0, 2);
-            if (firstTwo.startsWith("&")){
 
+            // Remove formatting code from string
+            token = MChatFormatting.stripFormatting(token);
+
+            if (firstTwo.startsWith("&")){
+                // This is a formatting code
                 char code = firstTwo.charAt(1);
                 ChatFormatting formatCode = ChatFormatting.getByCode(code);
-
                 if (formatCode != null){
-                    if (formatCode.isColor()) { // This is a color code
-                        // Remove formatting code from string
-                        token = MChatFormatting.stripFormatting(token);
-
-                        // Change current color and set string color
+                    if (formatCode.isColor()) {
+                        // Change current color
                         currentColor = formatCode;
-                        currentToken = Component.literal(token).withStyle(currentColor);
-
-                        // Set string style
-                        if (isObfuscated) currentToken = currentToken.copy().withStyle(ChatFormatting.OBFUSCATED);
-                        if (isBold) currentToken = currentToken.copy().withStyle(ChatFormatting.BOLD);
-                        if (isStrikethrough) currentToken = currentToken.copy().withStyle(ChatFormatting.STRIKETHROUGH);
-                        if (isUnderline) currentToken = currentToken.copy().withStyle(ChatFormatting.UNDERLINE);
-                        if (isItalic) currentToken = currentToken.copy().withStyle(ChatFormatting.ITALIC);
-
-                    } else if (formatCode.isFormat()) { // This is a formatting code
-
-                        // Remove formatting code from string
-                        token = MChatFormatting.stripFormatting(token);
-
-                        // Set string color
-                        currentToken = Component.literal(token).withStyle(currentColor);
-
-                        // Set styling
+                    } else if (formatCode.isFormat()) {
+                        // Change current styling
                         switch (formatCode.getName()) {
                             case "obfuscated" -> isObfuscated = true;
                             case "bold" -> isBold = true;
@@ -103,64 +81,33 @@ public class Minissentials implements ModInitializer {
                             case "underline" -> isUnderline = true;
                             case "italic" -> isItalic = true;
                         }
-
-                        // Set string style
-                        if (isObfuscated) currentToken = currentToken.copy().withStyle(ChatFormatting.OBFUSCATED);
-                        if (isBold) currentToken = currentToken.copy().withStyle(ChatFormatting.BOLD);
-                        if (isStrikethrough) currentToken = currentToken.copy().withStyle(ChatFormatting.STRIKETHROUGH);
-                        if (isUnderline) currentToken = currentToken.copy().withStyle(ChatFormatting.UNDERLINE);
-                        if (isItalic) currentToken = currentToken.copy().withStyle(ChatFormatting.ITALIC);
-
                     } else {
-                        // MOST LIKELY A RESET CODE
-
+                        // RESET CODE
                         currentColor = defaultColor;
-
-                        isObfuscated = false;
-                        isBold = false;
-                        isStrikethrough = false;
-                        isItalic = false;
-                        isUnderline = false;
-
-                        // Remove the formatting code from string
-                        token = MChatFormatting.stripFormatting(token);
-
-                        // Add current color (is set to defaultColor above)
-                        currentToken = Component.literal(token).withStyle(currentColor);
+                        isObfuscated = isBold = isStrikethrough = isItalic = isUnderline = false;
                     }
-
                 } else {
-                    // This is not a formatting code
-                    // Preserve the & sign
-
-                    // Set string color
-                    currentToken = Component.literal(token).withStyle(currentColor);
-
-                    // Set string style
-                    if (isObfuscated) currentToken = currentToken.copy().withStyle(ChatFormatting.OBFUSCATED);
-                    if (isBold) currentToken = currentToken.copy().withStyle(ChatFormatting.BOLD);
-                    if (isStrikethrough) currentToken = currentToken.copy().withStyle(ChatFormatting.STRIKETHROUGH);
-                    if (isUnderline) currentToken = currentToken.copy().withStyle(ChatFormatting.UNDERLINE);
-                    if (isItalic) currentToken = currentToken.copy().withStyle(ChatFormatting.ITALIC);
+                    // This starts with & but is not a formatting code
                 }
             } else {
-                // This should be the same situation as above
-
-                // Set string color
-                currentToken = Component.literal(token).withStyle(currentColor);
-
-                // Set string style
-                if (isObfuscated) currentToken = currentToken.copy().withStyle(ChatFormatting.OBFUSCATED);
-                if (isBold) currentToken = currentToken.copy().withStyle(ChatFormatting.BOLD);
-                if (isStrikethrough) currentToken = currentToken.copy().withStyle(ChatFormatting.STRIKETHROUGH);
-                if (isUnderline) currentToken = currentToken.copy().withStyle(ChatFormatting.UNDERLINE);
-                if (isItalic) currentToken = currentToken.copy().withStyle(ChatFormatting.ITALIC);
+                // This doesn't start with &
             }
+
+            // Set string color
+            currentToken = Component.literal(token).withStyle(currentColor);
+
+            // Set string style
+            if (isObfuscated) currentToken = currentToken.copy().withStyle(ChatFormatting.OBFUSCATED);
+            if (isBold) currentToken = currentToken.copy().withStyle(ChatFormatting.BOLD);
+            if (isStrikethrough) currentToken = currentToken.copy().withStyle(ChatFormatting.STRIKETHROUGH);
+            if (isUnderline) currentToken = currentToken.copy().withStyle(ChatFormatting.UNDERLINE);
+            if (isItalic) currentToken = currentToken.copy().withStyle(ChatFormatting.ITALIC);
 
             // Add the token
             tokenString.getSiblings().add(currentToken);
         }
 
+        // Send final chat
         context.getSource().sendSuccess(() -> tokenString, false);
     }
 }
