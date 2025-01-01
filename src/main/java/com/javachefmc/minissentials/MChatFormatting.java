@@ -44,15 +44,11 @@ public enum MChatFormatting implements StringRepresentable {
     UNDERLINE("UNDERLINE", 'n', true),
     ITALIC("ITALIC", 'o', true),
 
-    RESET("RESET", 'r', -1, (Integer)null);
+    RESET("RESET", 'r', -1, null);
 
     public static final Codec<MChatFormatting> CODEC = StringRepresentable.fromEnum(MChatFormatting::values);
     public static final char PREFIX_CODE = '&';
-    private static final Map FORMATTING_BY_NAME = (Map)Arrays.stream(values()).collect(Collectors.toMap((chatFormatting) -> {
-        return cleanName(chatFormatting.name);
-    }, (chatFormatting) -> {
-        return chatFormatting;
-    }));
+    private static final Map FORMATTING_BY_NAME = Arrays.stream(values()).collect(Collectors.toMap((chatFormatting) -> cleanName(chatFormatting.name), (chatFormatting) -> chatFormatting));
     private static final Pattern STRIP_FORMATTING_PATTERN = Pattern.compile("(?i)&[0-9A-FK-OR]");
     private final String name;
     private final char code;
@@ -71,7 +67,7 @@ public enum MChatFormatting implements StringRepresentable {
     }
 
     MChatFormatting(final String string2, final char c, final boolean bl) {
-        this(string2, c, bl, -1, (Integer)null);
+        this(string2, c, bl, -1, null);
     }
 
     MChatFormatting(final String string2, final char c, final boolean bl, final int j, @Nullable final Integer integer) {
@@ -80,7 +76,7 @@ public enum MChatFormatting implements StringRepresentable {
         this.isFormat = bl;
         this.id = j;
         this.color = integer;
-        this.toString = "§" + String.valueOf(c);
+        this.toString = "&" + c;
     }
 
     public char getChar() {
@@ -129,10 +125,8 @@ public enum MChatFormatting implements StringRepresentable {
             return RESET;
         } else {
             MChatFormatting[] var1 = values();
-            int var2 = var1.length;
 
-            for(int var3 = 0; var3 < var2; ++var3) {
-                MChatFormatting chatFormatting = var1[var3];
+            for (MChatFormatting chatFormatting : var1) {
                 if (chatFormatting.getId() == i) {
                     return chatFormatting;
                 }
@@ -146,10 +140,8 @@ public enum MChatFormatting implements StringRepresentable {
     public static MChatFormatting getByCode(char c) {
         char d = Character.toLowerCase(c);
         MChatFormatting[] var2 = values();
-        int var3 = var2.length;
 
-        for(int var4 = 0; var4 < var3; ++var4) {
-            MChatFormatting chatFormatting = var2[var4];
+        for (MChatFormatting chatFormatting : var2) {
             if (chatFormatting.code == d) {
                 return chatFormatting;
             }
@@ -161,10 +153,8 @@ public enum MChatFormatting implements StringRepresentable {
     public static Collection<String> getNames(boolean bl, boolean bl2) {
         List<String> list = Lists.newArrayList();
         MChatFormatting[] var3 = values();
-        int var4 = var3.length;
 
-        for(int var5 = 0; var5 < var4; ++var5) {
-            MChatFormatting chatFormatting = var3[var5];
+        for (MChatFormatting chatFormatting : var3) {
             if ((!chatFormatting.isColor() || bl) && (!chatFormatting.isFormat() || bl2)) {
                 list.add(chatFormatting.getName());
             }
@@ -185,11 +175,9 @@ public enum MChatFormatting implements StringRepresentable {
     }
 
     public static ChatFormatting getStyle(char code){
-        switch (code){
-            case '1':
-                return ChatFormatting.AQUA;
-            default:
-                return ChatFormatting.WHITE;
-        }
+        return switch (code) {
+            case '1' -> ChatFormatting.AQUA;
+            default -> ChatFormatting.WHITE;
+        };
     }
 }
