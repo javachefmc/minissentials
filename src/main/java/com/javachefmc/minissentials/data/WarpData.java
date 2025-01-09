@@ -1,38 +1,29 @@
 package com.javachefmc.minissentials.data;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.phys.Vec2;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-
 public class WarpData {
-    /*
+    public String name;
+    public Vec3 coordinates;
+    public Object dimension;
 
-
-    Temporary file that will be replaced with JSON file handler
-
-
-     */
-    public static CompoundTag setSpawn(IEntityDataSaver player, Vec3 pos, Vec2 rot) {
-        CompoundTag nbt = player.getPersistentData();
-
-        CompoundTag spawnPos = new CompoundTag();
-        spawnPos.putDouble("X", pos.x);
-        spawnPos.putDouble("Y", pos.y);
-        spawnPos.putDouble("Z", pos.z);
-        spawnPos.putFloat("rotX", rot.x);
-        spawnPos.putFloat("rotY", rot.y);
-
-        nbt.put("spawnPos", spawnPos);
-
-//        nbt.putIntArray("spawnPos", new double[]{
-//                (int) Math.round(pos.x),
-//                (int) Math.round(pos.y),
-//                (int) Math.round(pos.z)
-//        });
-
-        // sync data
-        return spawnPos;
+    public enum Dimension{
+        OVERWORLD,
+        NETHER,
+        END
     }
 
+    public static Dimension getDimension(ResourceKey<Level> dimension){
+
+        return Dimension.OVERWORLD;
+    }
+
+    public boolean validate(){
+        if (name != null && coordinates != null && dimension != null) {
+            return true;
+        }
+        return false;
+    }
 }

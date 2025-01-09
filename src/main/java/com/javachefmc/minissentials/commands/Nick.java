@@ -11,7 +11,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
 import net.minidev.json.JSONObject;
 
-import static com.javachefmc.minissentials.data.MinissentialsData.setData;
+import static com.javachefmc.minissentials.data.MinissentialsData.setPlayerData;
 
 public class Nick {
     /*
@@ -28,7 +28,7 @@ public class Nick {
 
     private static int getNick(CommandContext<CommandSourceStack> context){
         ServerPlayer player = context.getSource().getPlayer();
-        JSONObject playerStats = MinissentialsData.getData(player, MinissentialsData.DataFileType.stats);
+        JSONObject playerStats = MinissentialsData.getPlayerData(player, MinissentialsData.PlayerDataFileType.stats);
         String nick = playerStats.get("nick").toString();
 
         if (!nick.isEmpty()){
@@ -42,7 +42,7 @@ public class Nick {
 
     private static int setNick(CommandContext<CommandSourceStack> context) {
         ServerPlayer player = context.getSource().getPlayer();
-        JSONObject playerStats = MinissentialsData.getData(player, MinissentialsData.DataFileType.stats);
+        JSONObject playerStats = MinissentialsData.getPlayerData(player, MinissentialsData.PlayerDataFileType.stats);
 
         // Get arg
         String nickname = context.getArgument("nickname", String.class);
@@ -51,7 +51,7 @@ public class Nick {
         playerStats.put("nick", nickname);
 
         // Try to set the data
-        if (setData(player, MinissentialsData.DataFileType.stats, playerStats)){
+        if (setPlayerData(player, MinissentialsData.PlayerDataFileType.stats, playerStats)){
             Minissentials.chatToSender(context, "Changed nickname to " + nickname);
         } else {
             Minissentials.chatToSender(context, "An error occurred while setting your nickname.");

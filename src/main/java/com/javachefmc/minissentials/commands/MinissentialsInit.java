@@ -1,5 +1,7 @@
 package com.javachefmc.minissentials.commands;
 
+import com.javachefmc.minissentials.Minissentials;
+import com.javachefmc.minissentials.chat.ChatHandler;
 import com.javachefmc.minissentials.data.MinissentialsData;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
@@ -8,8 +10,6 @@ import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
-
-import static com.javachefmc.minissentials.Minissentials.chatToSender;
 
 public class MinissentialsInit {
     /*
@@ -29,9 +29,17 @@ public class MinissentialsInit {
 
         // run initializer here
 
-        MinissentialsData.init(player);
+        Minissentials.log("Initializing world data....");
 
-        chatToSender(context, "Initialized Minissentials for UUID " + player.getStringUUID());
+        MinissentialsData.init();
+
+        Minissentials.log("Initializing player data....");
+
+        MinissentialsData.initPlayer(player);
+
+        Minissentials.log("....Done");
+
+        Minissentials.chatToSender(context, "Initialized Minissentials for UUID " + player.getStringUUID());
 
         return 1;
     }

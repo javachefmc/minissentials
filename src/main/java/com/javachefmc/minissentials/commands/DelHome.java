@@ -1,6 +1,7 @@
 package com.javachefmc.minissentials.commands;
 
 import com.javachefmc.minissentials.Minissentials;
+import com.javachefmc.minissentials.chat.ChatHandler;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandBuildContext;

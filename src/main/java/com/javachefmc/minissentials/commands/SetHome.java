@@ -1,10 +1,7 @@
 package com.javachefmc.minissentials.commands;
 
-import com.javachefmc.minissentials.data.IEntityDataSaver;
-import com.javachefmc.minissentials.data.WarpData;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -47,7 +44,7 @@ public class SetHome {
 //        String command = context.getInput();
 //        String args = command.split(" ",2)[1];
 
-        WarpData.setSpawn((IEntityDataSaver) player, player.position(), player.getRotationVector());
+//        WarpData.setSpawn((IEntityDataSaver) player, player.position(), player.getRotationVector());
 
         context.getSource().sendSuccess(() -> Component.literal("Set home to " + player.position()), false);
 

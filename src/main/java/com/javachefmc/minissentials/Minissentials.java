@@ -1,23 +1,29 @@
 package com.javachefmc.minissentials;
 
+import com.javachefmc.minissentials.chat.ChatHandler;
+import com.javachefmc.minissentials.chat.MChatFormatting;
 import com.javachefmc.minissentials.util.CommandRegistries;
 import com.mojang.brigadier.context.CommandContext;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.PlayerList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 
 public class Minissentials implements ModInitializer {
 
     public static final String MOD_ID = "minissentials";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-    public static final String prefix = "[" + MOD_ID + "] ";
+    public static final String LOGGER_PREFIX = "[" + MOD_ID + "] ";
+    public static final Component CHAT_PREFIX = Component.literal("[Minissentials] ").withStyle(ChatFormatting.GOLD);
 
-    public static final int DEFAULT_COLOR = MChatFormatting.getByCode('f').getId();
-    public static final MChatFormatting DEFAULT_FORMATTING = MChatFormatting.WHITE;
+    public static final MChatFormatting DEFAULT_CHAT_COLOR = MChatFormatting.WHITE;
 
     @Override
     public void onInitialize() {
@@ -29,85 +35,50 @@ public class Minissentials implements ModInitializer {
     }
 
     public static void log(String message) {
-        LOGGER.info(prefix + message);
+        LOGGER.info(LOGGER_PREFIX + "{}", message);
     }
 
     public static void chatToSender(CommandContext<CommandSourceStack> context, String message) {
+        // Format text
+        Component formattedText = ChatHandler.formatText(message);
+        // Add prefix
+        formattedText.getSiblings().addFirst(CHAT_PREFIX);
+        // Send chat
+        context.getSource().sendSystemMessage(formattedText);
+    }
+    public static void chatToSender(ServerPlayer player, String message) {
+        // Format text
+        Component formattedText = ChatHandler.formatText(message);
+        // Add prefix
+        formattedText.getSiblings().addFirst(CHAT_PREFIX);
+        // Send chat
+        player.sendSystemMessage(formattedText);
+    }
 
-        String formattedText = MChatFormatting.stripFormatting(message);
-        String[] tokenizedText = MChatFormatting.toTokens(message);
+    public static void chatToEveryone(CommandContext<CommandSourceStack> context, String message) {
+        Component formattedText = ChatHandler.formatText(message);
 
-        // TODO: ALL OF THIS CODE NEEDS TO BE MOVED TO MCHATFORMATTING
+        ServerPlayer player = context.getSource().getPlayer();
+        List<ServerPlayer> players = context.getSource().getLevel().players();
+
+        // TODO: THIS DOESN'T WORK
+
+//        PlayerChatMessage playerChatMessage = PlayerChatMessage.unsigned(Objects.requireNonNull(player).getUUID(), message);
+
+//        PlayerChatMessage playerChatMessage = PlayerChatMessage.system(message);
+
+//        player.createCommandSourceStack().sendChatMessage(new OutgoingChatMessage.Player(playerChatMessage), false, ChatType.bind(ChatType.CHAT, player));
+
+        CommandSourceStack commandSourceStack = context.getSource();
+        PlayerList playerList = commandSourceStack.getServer().getPlayerList();
+//        playerList.broadcastChatMessage(formattedText, commandSourceStack, ChatType.bind(ChatType.SAY_COMMAND, commandSourceStack));
 
 
-        // Initialize state of string prior to stepping through it
-        boolean isObfuscated = false;
-        boolean isBold = false;
-        boolean isStrikethrough = false;
-        boolean isItalic = false;
-        boolean isUnderline = false;
+        // This actually sends in the log
+        context.getSource().getServer().sendSystemMessage(formattedText);
 
-        ChatFormatting defaultColor = ChatFormatting.WHITE;
-        ChatFormatting currentColor = defaultColor; // Empty color is default
-
-        Component tokenString = Component.literal("");
-        Component currentToken;
-
-        // add prefix
-        Component prefix = Component.literal("[Minissentials] ").withStyle(ChatFormatting.GOLD);
-        tokenString.getSiblings().add(prefix);
-
-        // Step through each token
-        for (String token : tokenizedText) {
-            String firstTwo = token.length() < 2 ? "" : token.substring(0, 2);
-
-            // Remove formatting code from string
-            token = MChatFormatting.stripFormatting(token);
-
-            if (firstTwo.startsWith("&")){
-                // This is a formatting code
-                char code = firstTwo.charAt(1);
-                ChatFormatting formatCode = ChatFormatting.getByCode(code);
-                if (formatCode != null){
-                    if (formatCode.isColor()) {
-                        // Change current color
-                        currentColor = formatCode;
-                    } else if (formatCode.isFormat()) {
-                        // Change current styling
-                        switch (formatCode.getName()) {
-                            case "obfuscated" -> isObfuscated = true;
-                            case "bold" -> isBold = true;
-                            case "strikethrough" -> isStrikethrough = true;
-                            case "underline" -> isUnderline = true;
-                            case "italic" -> isItalic = true;
-                        }
-                    } else {
-                        // RESET CODE
-                        currentColor = defaultColor;
-                        isObfuscated = isBold = isStrikethrough = isItalic = isUnderline = false;
-                    }
-                } else {
-                    // This starts with & but is not a formatting code
-                }
-            } else {
-                // This doesn't start with &
-            }
-
-            // Set string color
-            currentToken = Component.literal(token).withStyle(currentColor);
-
-            // Set string style
-            if (isObfuscated) currentToken = currentToken.copy().withStyle(ChatFormatting.OBFUSCATED);
-            if (isBold) currentToken = currentToken.copy().withStyle(ChatFormatting.BOLD);
-            if (isStrikethrough) currentToken = currentToken.copy().withStyle(ChatFormatting.STRIKETHROUGH);
-            if (isUnderline) currentToken = currentToken.copy().withStyle(ChatFormatting.UNDERLINE);
-            if (isItalic) currentToken = currentToken.copy().withStyle(ChatFormatting.ITALIC);
-
-            // Add the token
-            tokenString.getSiblings().add(currentToken);
+        for (ServerPlayer this_player : players) {
+            this_player.sendSystemMessage(formattedText);
         }
-
-        // Send final chat
-        context.getSource().sendSuccess(() -> tokenString, false);
     }
 }

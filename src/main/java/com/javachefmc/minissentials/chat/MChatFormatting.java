@@ -3,7 +3,7 @@
 // (powered by FernFlower decompiler)
 //
 
-package com.javachefmc.minissentials;
+package com.javachefmc.minissentials.chat;
 
 import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
@@ -169,10 +169,6 @@ public enum MChatFormatting implements StringRepresentable {
 
 
     ////// ADDED BY ME
-
-    public static String[] toTokens(String string){
-        return string.split("(?i)(?=&[0-9A-FK-OR])");
-    }
 
     public static ChatFormatting getStyle(char code){
         return switch (code) {
