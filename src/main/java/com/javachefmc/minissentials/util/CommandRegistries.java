@@ -20,13 +20,12 @@ public class CommandRegistries {
         CommandRegistrationCallback.EVENT.register(SetHome::register);
         CommandRegistrationCallback.EVENT.register(DelHome::register);
         CommandRegistrationCallback.EVENT.register(Home::register);
+        CommandRegistrationCallback.EVENT.register(Homes::register);
 
         CommandRegistrationCallback.EVENT.register(Spawn::register);
 
         CommandRegistrationCallback.EVENT.register(SetWarp::register);
         CommandRegistrationCallback.EVENT.register(DelWarp::register);
-        CommandRegistrationCallback.EVENT.register(SetGlobalWarp::register);
-        CommandRegistrationCallback.EVENT.register(DelGlobalWarp::register);
         CommandRegistrationCallback.EVENT.register(Warp::register);
         CommandRegistrationCallback.EVENT.register(Warps::register);
 

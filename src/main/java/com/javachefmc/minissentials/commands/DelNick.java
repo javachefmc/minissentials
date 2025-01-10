@@ -1,5 +1,6 @@
 package com.javachefmc.minissentials.commands;
 
+import com.google.gson.JsonObject;
 import com.javachefmc.minissentials.Minissentials;
 import com.javachefmc.minissentials.data.MinissentialsData;
 import com.mojang.brigadier.CommandDispatcher;
@@ -26,10 +27,10 @@ public class DelNick {
 
     private static int delNick(CommandContext<CommandSourceStack> context){
         ServerPlayer player = context.getSource().getPlayer();
-        JSONObject playerStats = MinissentialsData.getPlayerData(player, MinissentialsData.PlayerDataFileType.stats);
+        JsonObject playerStats = MinissentialsData.getPlayerData(player, MinissentialsData.PlayerDataFileType.stats);
         String nick = playerStats.get("nick").toString();
 
-        playerStats.put("nick",""); // Changes the nick in data
+        playerStats.addProperty("nick",""); // Changes the nick in data
 
         // Try to set the data
         if (setPlayerData(player, MinissentialsData.PlayerDataFileType.stats, playerStats)){

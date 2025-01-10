@@ -1,10 +1,11 @@
 package com.javachefmc.minissentials.data;
 
+import com.google.gson.JsonObject;
 import com.javachefmc.minissentials.Minissentials;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.level.ServerPlayer;
-import net.minidev.json.JSONObject;
-import net.minidev.json.parser.JSONParser;
+
+import com.google.gson.Gson;
 
 import java.io.*;
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ public class MinissentialsData {
     /*
 
 
-    Manages player JSON data
+    Manages player and world JSON data
 
 
      */
@@ -24,7 +25,7 @@ public class MinissentialsData {
     // Enum to avoid errors in typing file names
     public enum PlayerDataFileType {
         stats,
-        warps,
+        homes,
         messages
     }
     public enum WorldDataFileType {
@@ -49,16 +50,39 @@ public class MinissentialsData {
         return new File(WORLDDATA_DIR + "/" + fileType + DATAFILE_EXTENSION);
     }
 
-    public static JSONObject getPlayerData(ServerPlayer player, PlayerDataFileType fileType) {
-        JSONObject data = new JSONObject();
+    public static JsonObject getJsonFromFile(File file){
+        try (FileReader reader = new FileReader(file)) {
+            Gson gson = new Gson();
+            return gson.fromJson(reader, JsonObject.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
+    public static boolean createFileIfNotExist(File file){
+        if(!file.exists()) {
+            try {
+                file.createNewFile();
+                return true;
+            } catch (IOException e) {
+                return false;
+//                throw new RuntimeException(e);
+            }
+        } else {
+            return true;
+        }
+    }
+
+    public static JsonObject getPlayerData(ServerPlayer player, PlayerDataFileType fileType) {
         File dataFile = getPlayerDataFile(player, fileType);
 
+        JsonObject data = null;
         try {
             if (!dataFile.exists()) {
                 Minissentials.chatToSender(player, "File does not exist: " + fileType.toString());
             } else {
-                data = (JSONObject) new JSONParser().parse(new FileReader(dataFile));
+                data = getJsonFromFile(dataFile);
             }
         } catch(Exception e) {
             Minissentials.chatToSender(player, "Could not access the file: " + fileType.toString());
@@ -67,16 +91,18 @@ public class MinissentialsData {
         return data;
     }
 
-    public static boolean setPlayerData(ServerPlayer player, PlayerDataFileType fileType, JSONObject data) {
+    public static boolean setPlayerData(ServerPlayer player, PlayerDataFileType fileType, JsonObject data) {
         // Check if data folder exists; create if not
         File dataFolder = getPlayerDataFolder(player);
-        if(!dataFolder.exists()) { dataFolder.mkdirs(); }
+        if(!dataFolder.exists()) {
+            dataFolder.mkdirs();
+        }
 
         File dataFile = getPlayerDataFile(player, fileType);
 
         try {
             FileWriter file = new FileWriter(dataFile);
-            file.write(data.toJSONString());
+            file.write(data.toString());
             file.close();
             return true;
         } catch (IOException e) {
@@ -86,16 +112,15 @@ public class MinissentialsData {
         }
     }
 
-    public static JSONObject getWorldData(WorldDataFileType fileType) {
-        JSONObject data = new JSONObject();
-
+    public static JsonObject getWorldData(WorldDataFileType fileType) {
         File dataFile = getWorldDataFile(fileType);
 
+        JsonObject data = null;
         try {
             if (!dataFile.exists()) {
                 Minissentials.log("File does not exist: " + fileType.toString());
             } else {
-                data = (JSONObject) new JSONParser().parse(new FileReader(dataFile));
+                data = getJsonFromFile(dataFile);
             }
         } catch(Exception e) {
             Minissentials.log("Could not access the file: " + fileType.toString());
@@ -104,7 +129,7 @@ public class MinissentialsData {
         return data;
     }
 
-    public static boolean setWorldData(WorldDataFileType fileType, JSONObject data) {
+    public static boolean setWorldData(WorldDataFileType fileType, JsonObject data) {
         // Check if data folder exists; create if not
         File dataFolder = getWorldDataFolder();
         if(!dataFolder.exists()) { dataFolder.mkdirs(); }
@@ -113,7 +138,7 @@ public class MinissentialsData {
 
         try {
             FileWriter file = new FileWriter(dataFile);
-            file.write(data.toJSONString());
+            file.write(data.toString());
             file.close();
             return true;
         } catch (IOException e) {
@@ -124,7 +149,7 @@ public class MinissentialsData {
     }
 
     public static void init(){
-        Minissentials.log("Creating Minissentials folder structure");
+        Minissentials.log("Creating Minissentials global folder structure");
 
         File dataFolder = getWorldDataFolder();
 
@@ -137,21 +162,22 @@ public class MinissentialsData {
         if(!dataFolder.exists()) { dataFolder.mkdirs(); }
 
         // Serialize JSON
-
-        JSONObject data = new JSONObject();
-        data.put("spawn", "[0,300,0]");
+        // TODO: THIS SPAWN TELEPORT FORMAT IS VERY BAD
+        JsonObject data = new JsonObject();
+        data.addProperty("spawn", "[0,300,0]");
 
         // Try to write file
         try {
             FileWriter file = new FileWriter(getWorldDataFile(WorldDataFileType.warps));
-            file.write(data.toJSONString());
+            file.write(data.toString());
             file.close();
+            Minissentials.log(DATAFILE_EXTENSION + " file created: " + data);
         } catch (IOException e) {
 //            e.printStackTrace();
             Minissentials.log("An error occurred while saving Minissentials world data.");
         }
-        Minissentials.log(DATAFILE_EXTENSION + " file created: " + data);
-//        Minissentials.chatToSender(player, "Files created.");
+
+
     }
 
     public static void initPlayer(ServerPlayer player) {
@@ -161,11 +187,11 @@ public class MinissentialsData {
 
         Minissentials.log("Creating file for player " + username + " with UUID " + UUID);
 
-        // Set up file for player
+        // Set up folder for player
         File dataFolder = getPlayerDataFolder(player);
 
         /* Files:
-        - warps
+        - homes
             - spawn
             - personal warps
         - stats
@@ -179,26 +205,51 @@ public class MinissentialsData {
             - message
          */
 
-        if(!dataFolder.exists()) { dataFolder.mkdirs(); }
+        if(!dataFolder.exists()) {
+            dataFolder.mkdirs();
+        }
+
+        // Set up files
+
+        File statsFile = getPlayerDataFile(player, PlayerDataFileType.stats);
+        File messagesFile = getPlayerDataFile(player, PlayerDataFileType.messages);
+        File homesFile = getPlayerDataFile(player, PlayerDataFileType.homes);
+
+        createFileIfNotExist(statsFile);
+        createFileIfNotExist(messagesFile);
+        createFileIfNotExist(homesFile);
 
         // Serialize JSON
 
-        JSONObject stats = new JSONObject();
-        stats.put("username", username);
-        stats.put("nick", "");
-        stats.put("last_login", LocalDateTime.now().toString());
-        stats.put("first_login", LocalDateTime.now().toString());
+        JsonObject stats = new JsonObject();
+        stats.addProperty("username", username);
+        stats.addProperty("nick", "");
+        stats.addProperty("last_login", LocalDateTime.now().toString());
+        stats.addProperty("first_login", LocalDateTime.now().toString());
+
+        JsonObject messages = new JsonObject();
+        JsonObject homes = new JsonObject();
 
         try {
-            FileWriter file = new FileWriter(getPlayerDataFile(player, PlayerDataFileType.stats));
-            file.write(stats.toJSONString());
-            file.close();
+            FileWriter statsFileWriter = new FileWriter(statsFile);
+            statsFileWriter.write(stats.toString());
+            statsFileWriter.close();
+
+            FileWriter homesFileWriter = new FileWriter(homesFile);
+            homesFileWriter.write(homes.toString());
+            homesFileWriter.close();
+
+            FileWriter messagesFileWriter = new FileWriter(messagesFile);
+            messagesFileWriter.write(messages.toString());
+            messagesFileWriter.close();
+
         } catch (IOException e) {
 //            e.printStackTrace();
-            Minissentials.chatToSender(player, "An error occurred while saving your stats.");
+            Minissentials.chatToSender(player, "An error occurred while saving player files.");
         }
-        Minissentials.log(DATAFILE_EXTENSION + " file created: " + stats);
-        Minissentials.chatToSender(player, "Files created.");
+
+//        Minissentials.log(DATAFILE_EXTENSION + " file created: " + stats);
+//        Minissentials.chatToSender(player, "Files created.");
     }
 
     public double[] getSpawnPos(){
