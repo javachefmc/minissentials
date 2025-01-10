@@ -21,7 +21,7 @@ public class SetHome {
 
      */
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext commandBuildContext, Commands.CommandSelection commandSelection) {
-        dispatcher.register(Commands.literal("sethome")
+        dispatcher.register(Commands.literal("sethome").executes(SetHome::setHome)
                 .then(Commands.argument("name", StringArgumentType.word()).executes(SetHome::run)));
     }
 
@@ -59,6 +59,10 @@ public class SetHome {
             Minissentials.chatToSender(context, "You already have a home called &b" + name + "&r!");
         }
 
+        return 1;
+    }
+
+    private static int setHome(CommandContext<CommandSourceStack> context){
         return 1;
     }
 }

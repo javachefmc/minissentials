@@ -162,9 +162,7 @@ public class MinissentialsData {
         if(!dataFolder.exists()) { dataFolder.mkdirs(); }
 
         // Serialize JSON
-        // TODO: THIS SPAWN TELEPORT FORMAT IS VERY BAD
         JsonObject data = new JsonObject();
-        data.addProperty("spawn", "[0,300,0]");
 
         // Try to write file
         try {
@@ -176,8 +174,6 @@ public class MinissentialsData {
 //            e.printStackTrace();
             Minissentials.log("An error occurred while saving Minissentials world data.");
         }
-
-
     }
 
     public static void initPlayer(ServerPlayer player) {

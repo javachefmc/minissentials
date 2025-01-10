@@ -1,6 +1,7 @@
 package com.javachefmc.minissentials.commands;
 
-import com.javachefmc.minissentials.Minissentials;
+import com.google.gson.JsonObject;
+import com.javachefmc.minissentials.data.MinissentialsData;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandBuildContext;
@@ -21,7 +22,12 @@ public class Warps {
 
     private static int run(CommandContext<CommandSourceStack> context){
         // Do something
-        Minissentials.chatToSender(context, "Listing warps");
+//        Minissentials.chatToSender(context, "Listing warps");
+        JsonObject warps = MinissentialsData.getWorldData(MinissentialsData.WorldDataFileType.warps);
+
+
+//        Set<String> keys = JsonObject.keySet();
+
         return 1;
     }
 }

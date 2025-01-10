@@ -9,7 +9,6 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minidev.json.JSONObject;
 
 public class Warp {
     /*
@@ -34,7 +33,6 @@ public class Warp {
             JsonObject coordinates = warps.getAsJsonObject(name).getAsJsonObject("coordinates");
             Minissentials.log(coordinates.toString());
         }
-
 
         if (warps.has(name)){
             // Warp exists
