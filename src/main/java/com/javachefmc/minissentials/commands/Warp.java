@@ -3,12 +3,15 @@ package com.javachefmc.minissentials.commands;
 import com.google.gson.JsonObject;
 import com.javachefmc.minissentials.Minissentials;
 import com.javachefmc.minissentials.data.MinissentialsData;
+import com.javachefmc.minissentials.teleport.TeleportHandler;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.phys.Vec3;
 
 public class Warp {
     /*
@@ -24,25 +27,28 @@ public class Warp {
     }
 
     private static int run(CommandContext<CommandSourceStack> context){
-
         // Get warps
         JsonObject warps = MinissentialsData.getWorldData(MinissentialsData.WorldDataFileType.warps);
         String name = context.getArgument("name", String.class);
 
-        if (warps.has(name)) {
-            JsonObject coordinates = warps.getAsJsonObject(name).getAsJsonObject("coordinates");
-            Minissentials.log(coordinates.toString());
-        }
-
         if (warps.has(name)){
             // Warp exists
 
-            // TODO: CHECK IF WARP LOCATION IS SAFE
-//            if(TeleportHandler.isSafe())
-            Minissentials.chatToSender(context, "Warping to &b" + name + "&r...");
+            // Get coordinates
+            JsonObject coordinates = warps.getAsJsonObject(name).getAsJsonObject("coordinates");
+            Double x = coordinates.get("x").getAsDouble();
+            Double y = coordinates.get("y").getAsDouble();
+            Double z = coordinates.get("z").getAsDouble();
 
-
-
+            // Teleport to location if safe
+            if(TeleportHandler.isSafe(new Vec3(x, y, z))) {
+                ServerPlayer player = context.getSource().getPlayer();
+                Minissentials.chatToSender(context, "Warping to &b" + name + "&r...");
+                Minissentials.log("Warping player " + player.getDisplayName().toString() + " to warp " + name);
+                player.teleportTo(x, y, z);
+            } else {
+                Minissentials.chatToSender(context, "Warp &b" + name + "&r is not safe");
+            }
         } else {
             Minissentials.chatToSender(context, "A warp called &b" + name + "&r does not exist");
         }

@@ -26,9 +26,6 @@ public class SetWarp {
     }
 
     private static int run(CommandContext<CommandSourceStack> context){
-        // Do something
-//        Minissentials.chatToSender(context, "Setting global warp: " + context.getArgument("name", String.class));
-
         // Get current warp data
         JsonObject warps = MinissentialsData.getWorldData(MinissentialsData.WorldDataFileType.warps);
 
@@ -36,6 +33,7 @@ public class SetWarp {
         String name = context.getArgument("name", String.class);
         String dimension = String.valueOf(WarpData.getDimension(context.getSource().getLevel().dimension()));
 
+        // Get player
         ServerPlayer player = context.getSource().getPlayer();
         assert player != null;
 
@@ -44,6 +42,8 @@ public class SetWarp {
         coordinates.addProperty("x", player.position().x);
         coordinates.addProperty("y", player.position().y);
         coordinates.addProperty("z", player.position().z);
+
+        // TODO: Also include rotation data in warp
 
         // Serialize warp data
         JsonObject warp = new JsonObject();

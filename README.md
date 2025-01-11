@@ -20,16 +20,32 @@ CURRENTLY IN ALPHA - PLEASE DO NOT USE ON A PRODUCTION SERVER
 - /spawn
   - Teleport to world spawn
 
+Warps: server-wide teleport locations
+- /setwarp \<name>
+  - Creates warp
+- /warp \<name>
+  - Teleport to warp
+- /warps
+  - Shows all available warps
+
+Homes: personal teleport locations
+- /sethome [\<name>]
+  - Sets (a) home
+- /home [\<name>]
+  - Teleport to (a) home
+- /homes
+  - Shows all of your homes
+
+
 ### Debug
 
 - /ping
   - Pong!
-- /testformat [<text>]
+- /testformat [\<text>]
   - Tests `&` text formatting system
 
 ## Planned features:
 - MOTD
-- Warps
 - Whisper
 - Mail
 - Nick
@@ -49,7 +65,7 @@ CURRENTLY IN ALPHA - PLEASE DO NOT USE ON A PRODUCTION SERVER
 
 - Nickname injector
 - Server-side JSON database structure
-- Warps
+- delwarp and delhome
 
 </details>
 
@@ -57,6 +73,7 @@ CURRENTLY IN ALPHA - PLEASE DO NOT USE ON A PRODUCTION SERVER
 <summary>KNOWN ISSUES</summary>
 
 - gamerule logAdminCommands compat
-- need op-only permissions for some commands. there is a pro
+- need op-only permissions for some commands
+- warps need to check if area is safe
 
 </details>

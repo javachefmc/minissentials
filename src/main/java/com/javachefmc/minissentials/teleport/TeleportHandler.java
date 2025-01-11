@@ -12,7 +12,7 @@ public class TeleportHandler {
 
 
      */
-    public Boolean isSafe(Vec3 location) {
+    public static Boolean isSafe(Vec3 location) {
         // TODO: actually code this
         Minissentials.log("WARNING: Using placeholder for teleport location safing");
         return true;
