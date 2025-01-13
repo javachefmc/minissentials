@@ -27,6 +27,8 @@ public class Home {
     }
 
     private static int runSimple(CommandContext<CommandSourceStack> context){
+        // TODO: THIS ISN'T WORKING
+        
         // Get player
         ServerPlayer player = context.getSource().getPlayer();
         assert player != null;
