@@ -31,24 +31,24 @@ public class Warp {
         JsonObject warps = MinissentialsData.getWorldData(MinissentialsData.WorldDataFileType.warps);
         String name = context.getArgument("name", String.class);
 
+        // Get player
+        ServerPlayer player = context.getSource().getPlayer();
+        assert player != null;
+
         if (warps.has(name)){
             // Warp exists
 
             // Get coordinates
             JsonObject coordinates = warps.getAsJsonObject(name).getAsJsonObject("coordinates");
-            Double x = coordinates.get("x").getAsDouble();
-            Double y = coordinates.get("y").getAsDouble();
-            Double z = coordinates.get("z").getAsDouble();
+            double x = coordinates.get("x").getAsDouble();
+            double y = coordinates.get("y").getAsDouble();
+            double z = coordinates.get("z").getAsDouble();
+            float rot_x = coordinates.get("rot_x").getAsFloat();
+            float rot_y = coordinates.get("rot_y").getAsFloat();
 
             // Teleport to location if safe
-            if(TeleportHandler.isSafe(new Vec3(x, y, z))) {
-                ServerPlayer player = context.getSource().getPlayer();
-                Minissentials.chatToSender(context, "Warping to &b" + name + "&r...");
-                Minissentials.log("Warping player " + player.getDisplayName().toString() + " to warp " + name);
-                player.teleportTo(x, y, z);
-            } else {
-                Minissentials.chatToSender(context, "Warp &b" + name + "&r is not safe");
-            }
+            TeleportHandler.teleportPlayer(player, player.getServer().overworld(), x, y, z, rot_x, rot_y);
+            
         } else {
             Minissentials.chatToSender(context, "A warp called &b" + name + "&r does not exist");
         }

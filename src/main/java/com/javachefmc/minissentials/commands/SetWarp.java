@@ -39,11 +39,13 @@ public class SetWarp {
 
         // Serialize coordinates
         JsonObject coordinates = new JsonObject();
+        // position
         coordinates.addProperty("x", player.position().x);
         coordinates.addProperty("y", player.position().y);
         coordinates.addProperty("z", player.position().z);
-
-        // TODO: Also include rotation data in warp
+        // rotation
+        coordinates.addProperty("rot_x", player.getXRot());
+        coordinates.addProperty("rot_y", player.getYRot());
 
         // Serialize warp data
         JsonObject warp = new JsonObject();

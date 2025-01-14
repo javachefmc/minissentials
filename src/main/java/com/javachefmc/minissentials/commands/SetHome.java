@@ -38,9 +38,13 @@ public class SetHome {
 
         // Serialize coordinates
         JsonObject coordinates = new JsonObject();
+        // position
         coordinates.addProperty("x", player.position().x);
         coordinates.addProperty("y", player.position().y);
         coordinates.addProperty("z", player.position().z);
+        // rotation
+        coordinates.addProperty("rot_x", player.getXRot());
+        coordinates.addProperty("rot_y", player.getYRot());
 
         // TODO: Also include rotation data in warp
 

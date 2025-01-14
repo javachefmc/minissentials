@@ -27,8 +27,6 @@ public class Home {
     }
 
     private static int runSimple(CommandContext<CommandSourceStack> context){
-        // TODO: THIS ISN'T WORKING
-        
         // Get player
         ServerPlayer player = context.getSource().getPlayer();
         assert player != null;
@@ -36,6 +34,7 @@ public class Home {
         // Get homes
         JsonObject homes = MinissentialsData.getPlayerData(player, MinissentialsData.PlayerDataFileType.homes);
 
+        // TODO: THIS ISN'T WORKING
         if (homes.has("Home")){
             // Home exists
 
@@ -44,15 +43,11 @@ public class Home {
             double x = coordinates.get("x").getAsDouble();
             double y = coordinates.get("y").getAsDouble();
             double z = coordinates.get("z").getAsDouble();
+            float rot_x = coordinates.get("rot_x").getAsFloat();
+            float rot_y = coordinates.get("rot_y").getAsFloat();
 
-            // Teleport to location if safe
-            if(TeleportHandler.isSafe(new Vec3(x, y, z))) {
-                Minissentials.chatToSender(context, "Teleporting home...");
-                Minissentials.log("Teleporting player " + player.getName() + " home");
-                player.teleportTo(x, y, z);
-            } else {
-                Minissentials.chatToSender(context, "Your home location is not safe");
-            }
+            // Attempt teleport
+            TeleportHandler.teleportPlayer(player, player.getServer().overworld(), x, y, z, rot_x, rot_y);
         } else {
             Minissentials.chatToSender(context, "You do not have a home named Home");
         }
@@ -76,15 +71,12 @@ public class Home {
             double x = coordinates.get("x").getAsDouble();
             double y = coordinates.get("y").getAsDouble();
             double z = coordinates.get("z").getAsDouble();
+            float rot_x = coordinates.get("rot_x").getAsFloat();
+            float rot_y = coordinates.get("rot_y").getAsFloat();
 
-            // Teleport to location if safe
-            if(TeleportHandler.isSafe(new Vec3(x, y, z))) {
-                Minissentials.chatToSender(context, "Teleporting to &b" + name + "&r...");
-                Minissentials.log("Teleporting player " + player.getName() + " to home " + name);
-                player.teleportTo(x, y, z);
-            } else {
-                Minissentials.chatToSender(context, "&b" + name + "&r is not safe");
-            }
+            // Attempt teleport
+            TeleportHandler.teleportPlayer(player, player.getServer().overworld(), x, y, z, rot_x, rot_y);
+            
         } else {
             Minissentials.chatToSender(context, "You do not have a home called &b" + name + "&r");
         }
