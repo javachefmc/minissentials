@@ -1,5 +1,6 @@
 package com.javachefmc.minissentials.teleport;
 
+import com.google.gson.JsonObject;
 import com.javachefmc.minissentials.Minissentials;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -65,5 +66,32 @@ public class TeleportHandler {
         }
         
         return 1;
+    }
+    
+    public static JsonObject getCoordinateData(ServerPlayer player){
+        // Serialize coordinates
+        JsonObject coordinates = new JsonObject();
+        // position
+        coordinates.addProperty("x", player.position().x);
+        coordinates.addProperty("y", player.position().y);
+        coordinates.addProperty("z", player.position().z);
+        // rotation
+        coordinates.addProperty("rot_x", player.getXRot());
+        coordinates.addProperty("rot_y", player.getYRot());
+        // dimension
+        coordinates.addProperty("dimension", player.level().toString());
+        
+        return coordinates;
+    }
+    
+    public static JsonObject createWarpData(ServerPlayer player){
+        JsonObject warp = new JsonObject();
+        JsonObject coordinates = getCoordinateData(player);
+        
+        warp.add("coordinates", coordinates);
+        warp.addProperty("creator", player.getStringUUID());
+        warp.addProperty("created", "<timestamp>");
+        
+        return warp;
     }
 }

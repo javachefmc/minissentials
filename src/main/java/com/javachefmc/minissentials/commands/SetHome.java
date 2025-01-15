@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.javachefmc.minissentials.Minissentials;
 import com.javachefmc.minissentials.data.MinissentialsData;
 import com.javachefmc.minissentials.data.WarpData;
+import com.javachefmc.minissentials.teleport.TeleportHandler;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -32,37 +33,15 @@ public class SetHome {
         // Get current home data
         JsonObject homes = MinissentialsData.getPlayerData(player, MinissentialsData.PlayerDataFileType.homes);
 
-        // Serialize new warp data
+        // Serialize new data data
         String name = context.getArgument("name", String.class);
-        String dimension = String.valueOf(WarpData.getDimension(context.getSource().getLevel().dimension()));
-
-        // Serialize coordinates
-        JsonObject coordinates = new JsonObject();
-        // position
-        coordinates.addProperty("x", player.position().x);
-        coordinates.addProperty("y", player.position().y);
-        coordinates.addProperty("z", player.position().z);
-        // rotation
-        coordinates.addProperty("rot_x", player.getXRot());
-        coordinates.addProperty("rot_y", player.getYRot());
-
-        // TODO: Also include rotation data in warp
-
-        // Serialize home data
-        JsonObject home = new JsonObject();
-        home.add("coordinates", coordinates);
-        home.addProperty("dimension", dimension);
-        home.addProperty("creator", player.getStringUUID());
-        home.addProperty("created", "<timestamp>");
+        JsonObject home = TeleportHandler.createWarpData(player);
 
         if (!homes.has(name)){
             // Home does not exist yet
-
             homes.add(name, home);
             MinissentialsData.setPlayerData(player, MinissentialsData.PlayerDataFileType.homes, homes);
-
-            Minissentials.chatToSender(context, "Set home &b" + name + "&r at &e[" + coordinates + "]");
-
+            Minissentials.chatToSender(context, "Set home &b" + name);
         } else {
             Minissentials.chatToSender(context, "You already have a home called &b" + name + "&r!");
         }
@@ -76,33 +55,15 @@ public class SetHome {
 
         // Get current home data
         JsonObject homes = MinissentialsData.getPlayerData(player, MinissentialsData.PlayerDataFileType.homes);
-
+        
         // Serialize new warp data
-        String dimension = String.valueOf(WarpData.getDimension(context.getSource().getLevel().dimension()));
-
-        // Serialize coordinates
-        JsonObject coordinates = new JsonObject();
-        coordinates.addProperty("x", player.position().x);
-        coordinates.addProperty("y", player.position().y);
-        coordinates.addProperty("z", player.position().z);
-
-        // TODO: Also include rotation data in warp
-
-        // Serialize home data
-        JsonObject home = new JsonObject();
-        home.add("coordinates", coordinates);
-        home.addProperty("dimension", dimension);
-        home.addProperty("creator", player.getStringUUID());
-        home.addProperty("created", "<timestamp>");
+        JsonObject home = TeleportHandler.createWarpData(player);
 
         if (!homes.has("Home")){
             // Home does not exist yet
-
             homes.add("Home", home);
             MinissentialsData.setPlayerData(player, MinissentialsData.PlayerDataFileType.homes, homes);
-
-            Minissentials.chatToSender(context, "Your home has been set to &e[" + coordinates + "]");
-
+            Minissentials.chatToSender(context, "Your home has been set");
         } else {
             Minissentials.chatToSender(context, "You already have a home called Home");
         }
