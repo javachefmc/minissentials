@@ -3,7 +3,6 @@ package com.javachefmc.minissentials.commands;
 import com.google.gson.JsonObject;
 import com.javachefmc.minissentials.Minissentials;
 import com.javachefmc.minissentials.data.MinissentialsData;
-import com.javachefmc.minissentials.data.WarpData;
 import com.javachefmc.minissentials.teleport.TeleportHandler;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;

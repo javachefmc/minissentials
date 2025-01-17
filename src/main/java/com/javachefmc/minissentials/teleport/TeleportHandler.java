@@ -3,8 +3,11 @@ package com.javachefmc.minissentials.teleport;
 import com.google.gson.JsonObject;
 import com.javachefmc.minissentials.Minissentials;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 public class TeleportHandler {
@@ -78,8 +81,8 @@ public class TeleportHandler {
         // rotation
         coordinates.addProperty("rot_x", player.getXRot());
         coordinates.addProperty("rot_y", player.getYRot());
-        // dimension
-        coordinates.addProperty("dimension", player.level().toString());
+        // level (dimension)
+        coordinates.addProperty("level", player.level().toString());
         
         return coordinates;
     }
@@ -93,5 +96,25 @@ public class TeleportHandler {
         warp.addProperty("created", "<timestamp>");
         
         return warp;
+    }
+
+    public static ResourceKey<Level> getLevelKey(String levelName) {
+        return switch (levelName) {
+            case "OVERWORLD" -> Level.OVERWORLD;
+            case "NETHER" -> Level.NETHER;
+            case "END" -> Level.END;
+            default -> null;
+        };
+    }
+    
+    public static ServerLevel getPlayerRelativeLevel(ServerPlayer player, String levelName) {
+        MinecraftServer server = player.getServer();
+        assert server != null;
+        return switch (levelName) {
+            case "OVERWORLD" -> server.getLevel(Level.OVERWORLD);
+            case "NETHER" -> server.getLevel(Level.NETHER);
+            case "END" -> server.getLevel(Level.END);
+            default -> null;
+        };
     }
 }

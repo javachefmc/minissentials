@@ -10,8 +10,10 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.phys.Vec3;
+
+import static com.javachefmc.minissentials.teleport.TeleportHandler.getPlayerRelativeLevel;
 
 public class Warp {
     /*
@@ -45,9 +47,10 @@ public class Warp {
             double z = coordinates.get("z").getAsDouble();
             float rot_x = coordinates.get("rot_x").getAsFloat();
             float rot_y = coordinates.get("rot_y").getAsFloat();
+            ServerLevel level = getPlayerRelativeLevel(player, coordinates.get("level").getAsString());
             
-            // Teleport to location if safe
-            TeleportHandler.teleportPlayer(player, player.getServer().overworld(), x, y, z, rot_x, rot_y);
+            // Attempt teleport
+            TeleportHandler.teleportPlayer(player, level, x, y, z, rot_x, rot_y);
             
         } else {
             Minissentials.chatToSender(context, "A warp called &b" + name + "&r does not exist");
