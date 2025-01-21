@@ -62,6 +62,9 @@ public class TeleportHandler {
             player.teleportTo(x, y, z);
             player.setXRot(rot_x);
             player.setYRot(rot_y);
+            player.setServerLevel(serverLevel);
+            
+//            player.teleportTo(serverLevel, x, y, z, Relative.ALL, rot_x, rot_y, false);
             
         } else {
             // Not safe

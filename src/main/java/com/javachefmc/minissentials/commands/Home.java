@@ -3,6 +3,7 @@ package com.javachefmc.minissentials.commands;
 import com.google.gson.JsonObject;
 import com.javachefmc.minissentials.Minissentials;
 import com.javachefmc.minissentials.data.MinissentialsData;
+import com.javachefmc.minissentials.data.WarpData;
 import com.javachefmc.minissentials.teleport.TeleportHandler;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -62,28 +63,17 @@ public class Home {
         ServerPlayer player = context.getSource().getPlayer();
         assert player != null;
 
-        // Get homes
-        JsonObject homes = MinissentialsData.getPlayerData(player, MinissentialsData.PlayerDataFileType.homes);
         String name = context.getArgument("name", String.class); // TODO: Make case insensitive
 
-        if (homes.has(name)){
-            // Home exists
-
-            // Get coordinates
-            JsonObject coordinates = homes.getAsJsonObject(name).getAsJsonObject("coordinates");
-            double x = coordinates.get("x").getAsDouble();
-            double y = coordinates.get("y").getAsDouble();
-            double z = coordinates.get("z").getAsDouble();
-            float rot_x = coordinates.get("rot_x").getAsFloat();
-            float rot_y = coordinates.get("rot_y").getAsFloat();
-            ServerLevel level = getPlayerRelativeLevel(player, coordinates.get("level").getAsString());
-            
+        // Get coordinates
+        WarpData c = new WarpData(player, name, MinissentialsData.PlayerDataFileType.homes);
+        if (c.exists) {
             // Attempt teleport
-            TeleportHandler.teleportPlayer(player, level, x, y, z, rot_x, rot_y);
-            
+            TeleportHandler.teleportPlayer(player, c.level, c.x, c.y, c.z, c.rot_x, c.rot_y);
         } else {
             Minissentials.chatToSender(context, "You do not have a home called &b" + name + "&r");
         }
+        
         return 1;
     }
 }
